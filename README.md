@@ -123,6 +123,34 @@ midea_dehumi:
   sha256password: cf76d55503cdee3....
 ```
 
+### 🆕 Regional Server Configuration (New Feature)
+
+This integration now supports different regional servers for better connectivity based on your location:
+
+```yaml
+midea_dehumidifier:
+  username: your_email@example.com
+  sha256password: your_sha256_hash
+  server_region: europe  # New option!
+```
+
+**Available Regions:**
+- `china` (default) - For Asian users
+- `europe` - For European users ⭐ (Recommended for EU)
+- `usa` - For North American users
+
+**Example for European users:**
+```yaml
+midea_dehumidifier:
+  username: your_email@example.com
+  sha256password: your_sha256_hash
+  server_region: europe
+```
+
+> **Note:** This feature is 100% backward compatible. If you don't specify `server_region`, it will use the Chinese server by default (same as previous versions).
+
+For detailed information about regional server configuration, see [SERVER_REGION_CONFIG.md](SERVER_REGION_CONFIG.md).
+
 If everything is ok, you will find the following two new entities in your HA dashboard:
 
 * **humidifier.midea_dehumidifier_*[Device_ID]***
@@ -277,4 +305,3 @@ If this project helps you to reduce time to develop your code, you can make me a
 
 [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=5E7ULVFGCGKU2&source=url)
 [![coffe](https://www.buymeacoffee.com/assets/img/custom_images/black_img.png)](https://www.buymeacoffee.com/barban)
-

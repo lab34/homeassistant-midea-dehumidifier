@@ -1,0 +1,13 @@
+# Fichiers de développement locaux
+.claude/
+CLAUDE.md
+IMPLEMENTATION_SUMMARY.md
+SERVER_REGION_CONFIG.md
+repair.md
+tasks.md
+
+# Fichiers de test locaux
+test_*.py
+
+# Configuration examples
+configuration_examples.yaml

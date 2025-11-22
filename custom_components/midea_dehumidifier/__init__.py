@@ -23,13 +23,15 @@ _LOGGER = logging.getLogger(__name__)
 
 CONF_SHA256_PASSWORD = 'sha256password'
 CONF_DEVICEID = 'deviceId'
+CONF_SERVER_REGION = 'server_region'
 
 CONFIG_SCHEMA = vol.Schema({
     DOMAIN: vol.Schema({
         vol.Required(CONF_USERNAME): cv.string,
         vol.Optional(CONF_PASSWORD): cv.string,
         vol.Optional(CONF_SHA256_PASSWORD): cv.string,
-        vol.Optional(CONF_DEVICEID): cv.string
+        vol.Optional(CONF_DEVICEID): cv.string,
+        vol.Optional(CONF_SERVER_REGION, default='china'): vol.In(['china', 'europe', 'usa'])
     })
 }, extra=vol.ALLOW_EXTRA)
 
@@ -44,11 +46,29 @@ async def async_setup(hass, config):
         return False
 
     from midea_inventor_lib import MideaClient
-    	
+
     username = config[DOMAIN].get(CONF_USERNAME)
     password = config[DOMAIN].get(CONF_PASSWORD)
     sha256password = config[DOMAIN].get(CONF_SHA256_PASSWORD)
     deviceId = config[DOMAIN].get(CONF_DEVICEID)
+    server_region = config[DOMAIN].get(CONF_SERVER_REGION, 'china')
+
+    # Apply server region configuration via monkey-patching
+    if server_region == 'europe':
+        _LOGGER.info("midea_dehumi: configuring for European server")
+        MideaClient.SERVER_URL = "https://mp-eu-prod.appsmb.com"
+        MideaClient.APP_ID = 1010
+        MideaClient.APP_KEY = "ac21b9f9cbfe4ca5a88562ef25e2b768"
+    elif server_region == 'usa':
+        _LOGGER.info("midea_dehumi: configuring for US server")
+        # TODO: Add US server configuration when available
+        MideaClient.SERVER_URL = "https://mapp.appsmb.com"
+        MideaClient.APP_ID = 1017
+        MideaClient.APP_KEY = "3742e9e5842d4ad59c2db887e12449f9"
+    else:  # china (default)
+        _LOGGER.info("midea_dehumi: configuring for Chinese server (default)")
+        # Keep default values from the library
+        pass
 	
     #_LOGGER.debug("midea_dehumi: CONFIG PARAMS: username=%s, password=%s, sha256password=%s, deviceId=%s", username, password, sha256password, deviceId)
 
