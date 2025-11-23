@@ -59,6 +59,9 @@ async def async_setup(hass, config):
         MideaClient.SERVER_URL = "https://mp-eu-prod.appsmb.com"
         MideaClient.APP_ID = 1010
         MideaClient.APP_KEY = "ac21b9f9cbfe4ca5a88562ef25e2b768"
+        # Override the login endpoint for European server
+        MideaClient.LOGIN_ID_ENDPOINT = "/mas/v5/app/proxy?alias=/v1/user/login/id/get/new"
+        MideaClient.LOGIN_ENDPOINT = "/mas/v5/app/proxy?alias=/mj/user/login"
     elif server_region == 'usa':
         _LOGGER.info("midea_dehumi: configuring for US server")
         # TODO: Add US server configuration when available
@@ -81,11 +84,12 @@ async def async_setup(hass, config):
 
     #Log-in to the Midea cloud Web Service and get the list of configured Midea/Inventor appliances for the user.
     _LOGGER.info("midea_dehumi: logging into Midea API Web Service...")
+    _LOGGER.info("midea_dehumi: server URL=%s, APP_ID=%s", getattr(MideaClient, 'SERVER_URL', 'default'), getattr(MideaClient, 'APP_ID', 'default'))
 
     #res = client.login()
     res = await hass.async_add_executor_job(client.login)
     if res == -1:
-        _LOGGER.error("midea-dehumi: login error")
+        _LOGGER.error("midea-dehumi: login error - check server configuration and credentials")
         return False
     else:
         sessionId = client.current["sessionId"]
@@ -121,7 +125,7 @@ async def async_setup(hass, config):
     else:
         if appliances is not None:
             for a in appliances:
-                if a["type"] == "0xA1" and deviceID == str(a["id"]):
+                if a["type"] == "0xA1" and deviceId == str(a["id"]):
                     targetDevice = a
 
 
